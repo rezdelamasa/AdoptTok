@@ -1,0 +1,144 @@
+main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: floralwhite;
+}
+
+.screen {
+    width: 36vw;
+    height: 64vw;
+    background: transparent;
+    color: white;
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.wrapper {
+    width: 100%;
+    position: relative;
+}
+
+.wrapper, .listing {
+    height: 100%;
+}
+
+.listing {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: rgb(0,0,0);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    transform: translateY(0);
+    transition: 1s all;
+    flex-grow: 1;
+}
+
+.listing.scrolling--down {
+    transform: translateY(-100%);
+}
+
+.listing.scrolling--up {
+    transform: translateY(100%);
+}
+
+
+.listing--next {
+    width: 100%;
+    height: 100%;
+    background: rgb(0,0,0);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    transform: translateY(0);
+    transition: 1s all;
+}
+
+.listing--prev {
+    width: 100%;
+    height: 100%;
+    background: rgb(0,0,0);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    transform: translateY(0);
+    top: -100%;
+    transition: 1s all;
+}
+
+.listing--prev + .listing {
+    transform: translateY(-100%);
+}
+
+.listing--prev + .listing.scrolling--up {
+    transform: translateY(0);
+}
+
+.listing--next.scrolling--down {
+    transform: translateY(-100%);
+}
+
+.listing--prev.scrolling--up {
+    transform: translateY(100%);
+}
+
+.listing__images {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.buttons {
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    margin: auto 0;
+    z-index: 10;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    opacity: 1;
+    transition: all 0.3s;
+}
+
+.buttons--scrolling {
+    opacity: 0;
+}
+
+.buttons button {
+    background: rgba(250, 250, 250, 1);
+    height: 32px;
+    width: 32px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 0;
+    color: #333;
+}
+
+.button--placeholder {
+    flex-grow: 1;
+}
+
+.listing__images img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.listing__content {
+    width: 100%;
+    position: relative;
+    z-index: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(255,255,255,0) 100%);
+}
