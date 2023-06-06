@@ -2,54 +2,18 @@
 import "./index.css"
 import React, {EventHandler, useEffect, useState} from "react";
 import {debounce} from "lodash";
+import axios from "axios";
+import client from "@/api/client.ts";
+
+const pfBaseUrl = "http://localhost:3000/";
 
 export default function Page() {
-  const [listings, setListings] = useState([
-    {
-      id: "1",
-      name: "Sudo",
-      breed: "Shiba Inu Mix",
-      images: [
-        "https://plus.unsplash.com/premium_photo-1668208365386-4198381c6f6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4MjM4Njg2MQ&ixlib=rb-4.0.3&q=80&w=1080",
-        "https://images.unsplash.com/photo-1567225591450-06036b3392a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4MTMyMTEwNw&ixlib=rb-4.0.3&q=80&w=1080"
-      ],
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    },
-    {
-      id: "2",
-      name: "Taki",
-      breed: "Chihuahua",
-      images: [
-        "https://images.unsplash.com/photo-1607386176712-d8baeb6178a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4NTg0MzQ4Nw&ixlib=rb-4.0.3&q=80&w=1080",
-        "https://images.unsplash.com/photo-1514134136604-e14631dd3477?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4NTg0MzUxNw&ixlib=rb-4.0.3&q=80&w=1080"
-      ],
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    },
-    {
-      id: "3",
-      name: "Sudo",
-      breed: "Shiba Inu Mix",
-      images: [
-        "https://plus.unsplash.com/premium_photo-1668208365386-4198381c6f6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4MjM4Njg2MQ&ixlib=rb-4.0.3&q=80&w=1080",
-        "https://images.unsplash.com/photo-1567225591450-06036b3392a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4MTMyMTEwNw&ixlib=rb-4.0.3&q=80&w=1080"
-      ],
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    },
-    {
-      id: "4",
-      name: "Taki",
-      breed: "Chihuahua",
-      images: [
-        "https://images.unsplash.com/photo-1607386176712-d8baeb6178a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4NTg0MzQ4Nw&ixlib=rb-4.0.3&q=80&w=1080",
-        "https://images.unsplash.com/photo-1514134136604-e14631dd3477?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTY4NTg0MzUxNw&ixlib=rb-4.0.3&q=80&w=1080"
-      ],
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-    }
-  ])
+  const [listings, setListings] = useState([])
 
   const [currentListingIndex, setCurrentListing] = useState(0);
   const [scrolling, setScrolling] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const debouncedScroll =
       debounce((event) => {
@@ -74,7 +38,7 @@ export default function Page() {
       }, 1000);
 
   const handleButtonPress = (dir: String) => {
-    const currentImagesLength = listings[currentImageIndex].images.length - 1;
+    const currentImagesLength = listings[currentImageIndex].photos.length - 1;
     setCurrentImageIndex(previousValue => {
       if(dir ===  "next" && previousValue < currentImagesLength) {
         return previousValue + 1;
@@ -86,7 +50,20 @@ export default function Page() {
     })
   }
 
+  const fetchAnimals = (): void => {
+    // setLoading(true)
+    client.animal.search()
+        .then(response => {
+          console.log(response);
+          setListings(response.data.animals);
+        })
+    setLoading(false);
+  }
+
   useEffect(() => {
+    setLoading(true);
+    fetchAnimals();
+
     const handleScroll: EventHandler<any> = (event) => {
       let listing = document.querySelector(".listing");
       let nextListing = document.querySelector(".listing--next");
@@ -133,11 +110,34 @@ export default function Page() {
     };
   }, []);
 
+  function ListingPhoto(listing: string) {
+    let listingIndex = 0;
+    if(listing === 'current') {
+      listingIndex = currentListingIndex
+    } else if(listing === 'next') {
+      listingIndex = currentListingIndex + 1;
+    } else if(listing === 'prev') {
+      listingIndex = currentListingIndex - 1;
+    }
+    if(!loading && listings.length) {
+      if(listings[currentListingIndex].photos.length) {
+        return (
+            <img src={listings[listingIndex]?.photos[currentImageIndex]?.medium} alt={listings[listingIndex]?.breed}/>
+        )
+      } else {
+        return (
+            <img src="" alt={listings[listingIndex]?.breed}/>
+        )
+      }
+    }
+  }
+
   function CurrentListingItem() {
+    if(loading) return;
     return (
         <div key={listings[currentListingIndex]?.id} className="listing">
           <div className="listing__images">
-            <img src={listings[currentListingIndex]?.images[currentImageIndex]} alt={listings[currentListingIndex]?.breed}/>
+            <ListingPhoto listing='current'></ListingPhoto>
           </div>
           <div className="listing__content p-6">
             <h1 className="mb-2 text-3xl font-bold">{listings[currentListingIndex]?.name}</h1>
@@ -149,11 +149,12 @@ export default function Page() {
   }
 
   function NextListingItem() {
+    // if(loading) return;
     if(scrolling === "down") {
       return (
           <div key={listings[currentListingIndex + 1]?.id} className="listing--next">
             <div className="listing__images">
-              <img src={listings[currentListingIndex + 1]?.images[0]} alt={listings[currentListingIndex + 1]?.breed}/>
+              <ListingPhoto listing='next'></ListingPhoto>
             </div>
             <div className="listing__content p-6">
               <h1 className="mb-2 text-3xl font-bold">{listings[currentListingIndex + 1]?.name}</h1>
@@ -166,11 +167,12 @@ export default function Page() {
   }
 
   function PreviousListingItem() {
+    if(loading) return;
     if(scrolling === "up") {
       return (
           <div key={listings[currentListingIndex - 1]?.id} className="listing--prev">
             <div className="listing__images">
-              <img src={listings[currentListingIndex - 1]?.images[0]} alt={listings[currentListingIndex - 1]?.breed}/>
+              <ListingPhoto listing='prev'></ListingPhoto>
             </div>
             <div className="listing__content p-6">
               <h1 className="mb-2 text-3xl font-bold">{listings[currentListingIndex - 1]?.name}</h1>
@@ -183,6 +185,7 @@ export default function Page() {
   }
 
   function PrevButton() {
+    if(loading) return;
     if(currentImageIndex > 0) {
       return (
         <button className="button--prev" onClick={() => handleButtonPress("prev")}>&#60;</button>
@@ -194,16 +197,19 @@ export default function Page() {
   }
 
   function NextButton() {
-    const currentListingImagesLength = listings[currentListingIndex].images.length - 1;
-    if(currentImageIndex < currentListingImagesLength) {
-      return (
-          <button className="button--next" onClick={() => handleButtonPress("next")}>&#62;</button>
-      )
+    if(!loading && listings.length) {
+      console.log(listings[currentListingIndex]);
+      const currentListingImagesLength = listings[currentListingIndex].photos.length - 1;
+      if(currentImageIndex < currentListingImagesLength) {
+        return (
+            <button className="button--next" onClick={() => handleButtonPress("next")}>&#62;</button>
+        )
+      }
     }
-    return;
   }
 
   function ImageButtons() {
+    if(loading) return;
     return (
       <div className={scrolling ? "buttons buttons--scrolling" : "buttons"}>
         <PrevButton></PrevButton>
