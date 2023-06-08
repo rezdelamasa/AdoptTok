@@ -146,7 +146,6 @@ export default function Page() {
     // setLoading(true)
     client.animal.search()
         .then(response => {
-          console.log(response);
           setListings(response.data.animals);
         })
     setLoading(false);
@@ -155,51 +154,6 @@ export default function Page() {
   useEffect(() => {
     setLoading(true);
     fetchAnimals();
-
-    const handleScroll: EventHandler<any> = (event) => {
-      let listing = document.querySelector(".listing");
-      let nextListing = document.querySelector(".listing--next");
-      let prevListing = document.querySelector(".listing--prev");
-      if(event.wheelDeltaY < 0) {
-        setScrolling("down");
-        setCurrentListing(previousValue => {
-          if(previousValue < listings.length - 1) {
-            if(listing) {
-              listing.className = "listing scrolling--down";
-            }
-
-            if(nextListing) {
-              nextListing.className = "listing--next scrolling--down"
-            }
-          }
-          return previousValue;
-        })
-      }
-
-      if(event.wheelDeltaY > 0) {
-        setScrolling("up");
-        setCurrentListing(previousValue => {
-          if(previousValue > 0) {
-            if(listing) {
-              listing.className = "listing scrolling--up";
-            }
-
-            if(prevListing) {
-              prevListing.className = "listing--prev scrolling--up"
-            }
-          }
-          return previousValue;
-        })
-      }
-
-      debouncedScroll(event);
-    };
-
-    window.addEventListener('mousewheel', handleScroll);
-
-    return () => {
-      window.removeEventListener('mousewheel', handleScroll);
-    };
   }, []);
 
   function ListingPhoto(listing: string) {
