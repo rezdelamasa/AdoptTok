@@ -242,22 +242,19 @@ export default function Page() {
     }
   }
 
-  function PreviousListingItem() {
-    if(loading) return;
-    if(scrolling === "up") {
-      return (
-          <div key={listings[currentListingIndex - 1]?.id} className="listing--prev">
-            <div className="listing__images">
-              <ListingPhoto listing='prev'></ListingPhoto>
-            </div>
-            <div className="listing__content p-6">
-              <h1 className="mb-2 text-3xl font-bold">{listings[currentListingIndex - 1]?.name}</h1>
-              <h2 className="mb-2 text-2xl">{listings[currentListingIndex - 1]?.breed}</h2>
-              <p className="">{listings[currentListingIndex - 1]?.text}</p>
-            </div>
-          </div>
-      )
-    }
+  function Listing(listing: Animal) {
+    return (
+      <div key={listing.id} id={listing.id + ''} className="listing">
+        <div className="listing__images">
+          <ListingPhoto listing={listing} current="current"></ListingPhoto>
+        </div>
+        <div className="listing__content p-6">
+          <h1 className="mb-2 text-3xl font-bold">{listing.name}</h1>
+          <h2 className="mb-2 text-2xl">{listing.breeds.primary}</h2>
+          <p className="">{listing.description}</p>
+        </div>
+      </div>
+    )
   }
 
   function PrevButton() {
