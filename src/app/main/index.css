@@ -19,10 +19,16 @@ main {
 .wrapper {
     width: 100%;
     position: relative;
+    overflow: hidden;
 }
 
 .wrapper, .listing {
     height: 100%;
+}
+
+.listings-wrapper {
+    height: 100%;
+    overflow: visible;
 }
 
 .listing {
@@ -33,19 +39,8 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    transform: translateY(0);
-    transition: 1s all;
     flex-grow: 1;
 }
-
-.listing.scrolling--down {
-    transform: translateY(-100%);
-}
-
-.listing.scrolling--up {
-    transform: translateY(100%);
-}
-
 
 .listing--next {
     width: 100%;
