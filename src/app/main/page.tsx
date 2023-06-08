@@ -87,7 +87,7 @@ type Animal = {
 export default function Page() {
   const [listings, setListings] = useState([])
 
-  const [currentListingIndex, setCurrentListing] = useState(0);
+  const [currentListingIndex, setCurrentListingIndex] = useState(0);
   const [scrolling, setScrolling] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -95,24 +95,38 @@ export default function Page() {
   const debouncedScroll =
       debounce((event) => {
         if(event.wheelDeltaY < 0) {
-          setCurrentListing(previousValue => {
+          setCurrentListingIndex(previousValue => {
             if(previousValue < listings.length - 1) {
-              return ++previousValue
+              const nextValue = previousValue + 1;
+              const nextListing: Animal = listings[nextValue];
+              const nextListingID = nextListing.id;
+              const element = document.getElementById("" + nextListingID);
+              if(element) {
+                element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+              }
+              return nextValue;
             }
             return previousValue;
           })
         }
         if(event.wheelDeltaY > 0){
-          setCurrentListing(previousValue => {
+          setCurrentListingIndex(previousValue => {
             if(previousValue > 0) {
-              return --previousValue;
+              const newValue = previousValue - 1;
+              const prevListing: Animal = listings[newValue];
+              const prevListingID = prevListing.id;
+              const element = document.getElementById("" + prevListingID);
+              if(element) {
+                element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+              }
+              return newValue;
             }
             return previousValue;
           })
         }
         setScrolling("");
         setCurrentImageIndex(0);
-      }, 1000);
+      }, 500);
 
   const handleButtonPress = (dir: String) => {
     const currentImagesLength = listings[currentImageIndex].photos.length - 1;
