@@ -261,7 +261,7 @@ export default function Page() {
     if(loading) return;
     if(currentImageIndex > 0) {
       return (
-        <button className="button--prev" onClick={() => handleButtonPress("prev")}>&#60;</button>
+        <button className="button--prev shadow-md" onClick={() => handleButtonPress("prev")}>&#60;</button>
       )
     }
     return (
@@ -271,11 +271,10 @@ export default function Page() {
 
   function NextButton() {
     if(!loading && listings.length) {
-      console.log(listings[currentListingIndex]);
       const currentListingImagesLength = listings[currentListingIndex].photos.length - 1;
       if(currentImageIndex < currentListingImagesLength) {
         return (
-            <button className="button--next" onClick={() => handleButtonPress("next")}>&#62;</button>
+            <button className="button--next shadow-md" onClick={() => handleButtonPress("next")}>&#62;</button>
         )
       }
     }
