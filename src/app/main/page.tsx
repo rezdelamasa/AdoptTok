@@ -230,36 +230,14 @@ export default function Page() {
     }
   }
 
-  function CurrentListingItem() {
-    if(loading) return;
-    return (
-        <div key={listings[currentListingIndex]?.id} className="listing">
-          <div className="listing__images">
-            <ListingPhoto listing='current'></ListingPhoto>
-          </div>
-          <div className="listing__content p-6">
-            <h1 className="mb-2 text-3xl font-bold">{listings[currentListingIndex]?.name}</h1>
-            <h2 className="mb-2 text-2xl">{listings[currentListingIndex]?.breed}</h2>
-            <p className="">{listings[currentListingIndex]?.text}</p>
-          </div>
-        </div>
-    )
-  }
-
-  function NextListingItem() {
-    // if(loading) return;
-    if(scrolling === "down") {
+  function Listings() {
+    if(listings.length && !loading) {
       return (
-          <div key={listings[currentListingIndex + 1]?.id} className="listing--next">
-            <div className="listing__images">
-              <ListingPhoto listing='next'></ListingPhoto>
-            </div>
-            <div className="listing__content p-6">
-              <h1 className="mb-2 text-3xl font-bold">{listings[currentListingIndex + 1]?.name}</h1>
-              <h2 className="mb-2 text-2xl">{listings[currentListingIndex + 1]?.breed}</h2>
-              <p className="">{listings[currentListingIndex + 1]?.text}</p>
-            </div>
-          </div>
+        <div className="listings-wrapper">
+          {listings.map((listing: Animal) => {
+            return <Listing key={listing.id} {...listing}></Listing>
+          })}
+        </div>
       )
     }
   }
