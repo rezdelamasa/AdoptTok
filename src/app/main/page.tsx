@@ -295,9 +295,7 @@ export default function Page() {
         <div className="screen shadow-2xl">
           <div className="wrapper">
             <ImageButtons></ImageButtons>
-            <PreviousListingItem></PreviousListingItem>
-            <CurrentListingItem></CurrentListingItem>
-            <NextListingItem></NextListingItem>
+            <Listings></Listings>
           </div>
         </div>
       </main>
