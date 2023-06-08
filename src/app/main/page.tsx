@@ -156,7 +156,59 @@ export default function Page() {
     fetchAnimals();
   }, []);
 
-  function ListingPhoto(listing: string) {
+  useEffect(() => {
+    const handleScroll: EventHandler<any> = (event) => {
+      let listing = document.querySelector(".listing");
+      let nextListing = document.querySelector(".listing--next");
+      let prevListing = document.querySelector(".listing--prev");
+      if(event.wheelDeltaY < 0) {
+        setScrolling("down");
+        setCurrentListingIndex(previousValue => {
+          if(previousValue < listings.length - 1) {
+            if(listing) {
+              listing.className = "listing scrolling--down";
+            }
+
+            if(nextListing) {
+              nextListing.className = "listing--next scrolling--down"
+            }
+          }
+          return previousValue;
+        })
+      }
+
+      if(event.wheelDeltaY > 0) {
+        setScrolling("up");
+        setCurrentListingIndex(previousValue => {
+          if(previousValue > 0) {
+            if(listing) {
+              listing.className = "listing scrolling--up";
+            }
+
+            if(prevListing) {
+              prevListing.className = "listing--prev scrolling--up"
+            }
+          }
+          return previousValue;
+        })
+      }
+
+      debouncedScroll(event);
+    };
+
+    window.addEventListener('mousewheel', handleScroll);
+
+    return () => {
+      window.removeEventListener('mousewheel', handleScroll);
+    };
+  }, [listings])
+
+  type PhotoProps = {
+    current: string,
+    listing: Animal
+  }
+
+  function ListingPhoto({ current, listing } : PhotoProps) {
     let listingIndex = 0;
     if(listing === 'current') {
       listingIndex = currentListingIndex
