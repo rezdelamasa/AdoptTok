@@ -210,21 +210,21 @@ export default function Page() {
 
   function ListingPhoto({ current, listing } : PhotoProps) {
     let listingIndex = 0;
-    if(listing === 'current') {
+    if(current === 'current') {
       listingIndex = currentListingIndex
-    } else if(listing === 'next') {
+    } else if(current === 'next') {
       listingIndex = currentListingIndex + 1;
-    } else if(listing === 'prev') {
+    } else if(current === 'prev') {
       listingIndex = currentListingIndex - 1;
     }
     if(!loading && listings.length) {
-      if(listings[currentListingIndex].photos.length) {
+      if(listing.photos.length) {
         return (
-            <img src={listings[listingIndex]?.photos[currentImageIndex]?.medium} alt={listings[listingIndex]?.breed}/>
+            <img src={listing.photos[currentImageIndex]?.medium} alt={listing.breed}/>
         )
       } else {
         return (
-            <img src="" alt={listings[listingIndex]?.breed}/>
+            <img src="" alt={listing.breed}/>
         )
       }
     }
