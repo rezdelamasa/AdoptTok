@@ -4,7 +4,6 @@ import React, {EventHandler, useEffect, useState} from "react";
 import {debounce} from "lodash";
 import client from "@/api/client";
 
-const pfBaseUrl = "http://localhost:3000/";
 
 type Animal = {
   "id": number,
@@ -87,7 +86,6 @@ export default function Page() {
   const [listings, setListings] = useState([])
 
   const [currentListingIndex, setCurrentListingIndex] = useState(0);
-  const [scrolling, setScrolling] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -123,7 +121,6 @@ export default function Page() {
             return previousValue;
           })
         }
-        setScrolling("");
         setCurrentImageIndex(0);
       }, 500);
 
@@ -157,41 +154,6 @@ export default function Page() {
 
   useEffect(() => {
     const handleScroll: EventHandler<any> = (event) => {
-      let listing = document.querySelector(".listing");
-      let nextListing = document.querySelector(".listing--next");
-      let prevListing = document.querySelector(".listing--prev");
-      if(event.wheelDeltaY < 0) {
-        setScrolling("down");
-        setCurrentListingIndex(previousValue => {
-          if(previousValue < listings.length - 1) {
-            if(listing) {
-              listing.className = "listing scrolling--down";
-            }
-
-            if(nextListing) {
-              nextListing.className = "listing--next scrolling--down"
-            }
-          }
-          return previousValue;
-        })
-      }
-
-      if(event.wheelDeltaY > 0) {
-        setScrolling("up");
-        setCurrentListingIndex(previousValue => {
-          if(previousValue > 0) {
-            if(listing) {
-              listing.className = "listing scrolling--up";
-            }
-
-            if(prevListing) {
-              prevListing.className = "listing--prev scrolling--up"
-            }
-          }
-          return previousValue;
-        })
-      }
-
       debouncedScroll(event);
     };
 
