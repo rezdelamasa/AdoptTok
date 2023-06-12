@@ -97,10 +97,10 @@ export default function Page() {
           return ++prevPage;
         })
         nextListing();
+        return prevIndex;
       } else {
         return ++prevIndex;
       }
-      return prevIndex;
     })
   }
 
@@ -122,7 +122,7 @@ export default function Page() {
       })
     }
     scrollToListing();
-  }, [currentListingIndex, listings]);
+  }, [currentListingIndex, listings.length]);
 
   const scrollToListing = () => {
     const nextListing: Animal = listings[currentListingIndex];
