@@ -114,37 +114,32 @@ export default function Page() {
 
   }
 
+  useEffect(() => {
+    if(currentListingIndex === 0 && !listings.length) return;
+    if(currentListingIndex === listings.length - 1) {
+      setCurrentListingsPage((prevPage: number) => {
+        return ++prevPage;
+      })
+    }
+    scrollToListing();
+  }, [currentListingIndex, listings]);
+
+  const scrollToListing = () => {
+    const nextListing: Animal = listings[currentListingIndex];
+    const nextListingID: number = nextListing.id;
+    const element = document.getElementById("" + nextListingID);
+    if(element) {
+      element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+    }
+  }
+
   const debouncedScroll =
       debounce((event) => {
         if(event.wheelDeltaY < 0) {
-          setCurrentListingIndex(previousValue => {
-            if(previousValue < listings.length - 1) {
-              const nextValue = previousValue + 1;
-              const nextListing: Animal = listings[nextValue];
-              const nextListingID = nextListing.id;
-              const element = document.getElementById("" + nextListingID);
-              if(element) {
-                element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-              }
-              return nextValue;
-            }
-            return previousValue;
-          })
+          nextListing();
         }
         if(event.wheelDeltaY > 0){
-          setCurrentListingIndex(previousValue => {
-            if(previousValue > 0) {
-              const newValue = previousValue - 1;
-              const prevListing: Animal = listings[newValue];
-              const prevListingID = prevListing.id;
-              const element = document.getElementById("" + prevListingID);
-              if(element) {
-                element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-              }
-              return newValue;
-            }
-            return previousValue;
-          })
+          prevListing();
         }
         setCurrentImageIndex(0);
       }, 500);
