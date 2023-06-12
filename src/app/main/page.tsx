@@ -145,8 +145,11 @@ export default function Page() {
       }, 500);
 
   const handleButtonPress = (dir: String) => {
-    const currentListing: Animal = listings[currentListingIndex];
-    const currentImagesLength = currentListing.photos.length - 1;
+    const currentListing: Animal | undefined = listings[currentListingIndex];
+    let currentImagesLength: number;
+    if(currentListing) {
+      currentImagesLength = currentListing.photos.length - 1;
+    }
     setCurrentImageIndex(previousValue => {
       if(dir ===  "next" && previousValue < currentImagesLength) {
         return previousValue + 1;
