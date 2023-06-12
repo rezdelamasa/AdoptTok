@@ -162,11 +162,14 @@ export default function Page() {
   }
 
   const fetchAnimals = (): void => {
-    // setLoading(true)
-    client.animal.search()
-        .then(response => {
-          setListings(response.data.animals);
-        })
+    client.animal.search({
+      page: currentListingsPage,
+    }).then(response => {
+        setListings((previousValue: Animal[]) => {
+          const allListings: Animal[] = [...previousValue, ...response.data.animals];
+          return allListings.filter((item, index) => allListings.indexOf(item) === index);
+        });
+      })
     setLoading(false);
   }
 
