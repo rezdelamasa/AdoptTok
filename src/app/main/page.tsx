@@ -195,15 +195,7 @@ export default function Page() {
     listing: Animal
   }
 
-  function ListingPhoto({ current, listing } : PhotoProps) {
-    let listingIndex = 0;
-    if(current === 'current') {
-      listingIndex = currentListingIndex
-    } else if(current === 'next') {
-      listingIndex = currentListingIndex + 1;
-    } else if(current === 'prev') {
-      listingIndex = currentListingIndex - 1;
-    }
+  function ListingPhoto({ listing } : PhotoProps) {
     if(!loading && listings.length) {
       if(listing.photos.length) {
         return (
