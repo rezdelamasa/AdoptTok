@@ -88,6 +88,31 @@ export default function Page() {
   const [currentListingIndex, setCurrentListingIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [currentListingsPage, setCurrentListingsPage] = useState(1);
+
+  function nextListing() {
+    setCurrentListingIndex((prevIndex) => {
+      if(prevIndex === listings.length - 1) {
+        setCurrentListingsPage((prevPage: number) => {
+          return ++prevPage;
+        })
+        nextListing();
+      } else {
+        return ++prevIndex;
+      }
+      return prevIndex;
+    })
+  }
+
+  function prevListing() {
+    setCurrentListingIndex((prevIndex) => {
+      if(prevIndex > 0) {
+        return --prevIndex;
+      }
+      return prevIndex;
+    })
+
+  }
 
   const debouncedScroll =
       debounce((event) => {
