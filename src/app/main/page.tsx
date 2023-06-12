@@ -83,7 +83,7 @@ type Animal = {
 }
 
 export default function Page() {
-  const [listings, setListings] = useState([])
+  const [listings, setListings] = useState<Animal[]>([])
 
   const [currentListingIndex, setCurrentListingIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
