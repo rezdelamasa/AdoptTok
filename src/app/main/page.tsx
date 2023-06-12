@@ -181,11 +181,11 @@ export default function Page() {
     if(!loading && listings.length) {
       if(listing.photos.length) {
         return (
-            <img src={listing.photos[currentImageIndex]?.medium} alt={listing.breed}/>
+            <img src={listing.photos[currentImageIndex]?.medium} alt={listing.name}/>
         )
       } else {
         return (
-            <img src="" alt={listing.breed}/>
+            <img src="" alt={listing.name}/>
         )
       }
     }
