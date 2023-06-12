@@ -2,8 +2,7 @@
 import "./index.css"
 import React, {EventHandler, useEffect, useState} from "react";
 import {debounce} from "lodash";
-import axios from "axios";
-import client from "@/api/client.ts";
+import client from "@/api/client";
 
 const pfBaseUrl = "http://localhost:3000/";
 
