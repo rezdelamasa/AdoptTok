@@ -262,7 +262,7 @@ export default function Page() {
   function ImageButtons() {
     if(loading) return;
     return (
-      <div className={scrolling ? "buttons buttons--scrolling" : "buttons"}>
+      <div>
         <PrevButton></PrevButton>
         <NextButton></NextButton>
       </div>
