@@ -176,7 +176,7 @@ export default function Page() {
   useEffect(() => {
     setLoading(true);
     fetchAnimals();
-  }, []);
+  }, [currentListingsPage]);
 
   useEffect(() => {
     const handleScroll: EventHandler<any> = (event) => {
