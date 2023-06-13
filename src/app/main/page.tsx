@@ -2,10 +2,8 @@
 import "./index.css"
 import React, {EventHandler, useEffect, useState} from "react";
 import {debounce} from "lodash";
-import axios from "axios";
-import client from "@/api/client.ts";
+import client from "@/api/client";
 
-const pfBaseUrl = "http://localhost:3000/";
 
 type Animal = {
   "id": number,
@@ -85,52 +83,73 @@ type Animal = {
 }
 
 export default function Page() {
-  const [listings, setListings] = useState([])
+  const [listings, setListings] = useState<Animal[]>([])
 
   const [currentListingIndex, setCurrentListingIndex] = useState(0);
-  const [scrolling, setScrolling] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [currentListingsPage, setCurrentListingsPage] = useState(1);
+
+  function nextListing() {
+    setCurrentListingIndex((prevIndex) => {
+      if(prevIndex === listings.length - 1) {
+        setCurrentListingsPage((prevPage: number) => {
+          return ++prevPage;
+        })
+        nextListing();
+        return prevIndex;
+      } else {
+        return ++prevIndex;
+      }
+    })
+  }
+
+  function prevListing() {
+    setCurrentListingIndex((prevIndex) => {
+      if(prevIndex > 0) {
+        return --prevIndex;
+      }
+      return prevIndex;
+    })
+
+  }
+
+  useEffect(() => {
+    if(currentListingIndex === 0 && !listings.length) return;
+    if(currentListingIndex === listings.length - 1) {
+      setCurrentListingsPage((prevPage: number) => {
+        return ++prevPage;
+      })
+    }
+    scrollToListing();
+  }, [currentListingIndex, listings.length]);
+
+  const scrollToListing = () => {
+    const nextListing: Animal = listings[currentListingIndex];
+    const nextListingID: number = nextListing.id;
+    const element = document.getElementById("" + nextListingID);
+    if(element) {
+      element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+    }
+  }
 
   const debouncedScroll =
       debounce((event) => {
         if(event.wheelDeltaY < 0) {
-          setCurrentListingIndex(previousValue => {
-            if(previousValue < listings.length - 1) {
-              const nextValue = previousValue + 1;
-              const nextListing: Animal = listings[nextValue];
-              const nextListingID = nextListing.id;
-              const element = document.getElementById("" + nextListingID);
-              if(element) {
-                element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-              }
-              return nextValue;
-            }
-            return previousValue;
-          })
+          nextListing();
         }
         if(event.wheelDeltaY > 0){
-          setCurrentListingIndex(previousValue => {
-            if(previousValue > 0) {
-              const newValue = previousValue - 1;
-              const prevListing: Animal = listings[newValue];
-              const prevListingID = prevListing.id;
-              const element = document.getElementById("" + prevListingID);
-              if(element) {
-                element.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-              }
-              return newValue;
-            }
-            return previousValue;
-          })
+          prevListing();
         }
-        setScrolling("");
         setCurrentImageIndex(0);
       }, 500);
 
   const handleButtonPress = (dir: String) => {
-    const currentListing: Animal = listings[currentListingIndex];
-    const currentImagesLength = currentListing.photos.length - 1;
+    const currentListing: Animal | undefined = listings[currentListingIndex];
+    let currentImagesLength: number;
+    if(currentListing) {
+      currentImagesLength = currentListing.photos.length - 1;
+    }
     setCurrentImageIndex(previousValue => {
       if(dir ===  "next" && previousValue < currentImagesLength) {
         return previousValue + 1;
@@ -143,56 +162,24 @@ export default function Page() {
   }
 
   const fetchAnimals = (): void => {
-    // setLoading(true)
-    client.animal.search()
-        .then(response => {
-          setListings(response.data.animals);
-        })
+    client.animal.search({
+      page: currentListingsPage,
+    }).then(response => {
+        setListings((previousValue: Animal[]) => {
+          const allListings: Animal[] = [...previousValue, ...response.data.animals];
+          return allListings.filter((item, index) => allListings.indexOf(item) === index);
+        });
+      })
     setLoading(false);
   }
 
   useEffect(() => {
     setLoading(true);
     fetchAnimals();
-  }, []);
+  }, [currentListingsPage]);
 
   useEffect(() => {
     const handleScroll: EventHandler<any> = (event) => {
-      let listing = document.querySelector(".listing");
-      let nextListing = document.querySelector(".listing--next");
-      let prevListing = document.querySelector(".listing--prev");
-      if(event.wheelDeltaY < 0) {
-        setScrolling("down");
-        setCurrentListingIndex(previousValue => {
-          if(previousValue < listings.length - 1) {
-            if(listing) {
-              listing.className = "listing scrolling--down";
-            }
-
-            if(nextListing) {
-              nextListing.className = "listing--next scrolling--down"
-            }
-          }
-          return previousValue;
-        })
-      }
-
-      if(event.wheelDeltaY > 0) {
-        setScrolling("up");
-        setCurrentListingIndex(previousValue => {
-          if(previousValue > 0) {
-            if(listing) {
-              listing.className = "listing scrolling--up";
-            }
-
-            if(prevListing) {
-              prevListing.className = "listing--prev scrolling--up"
-            }
-          }
-          return previousValue;
-        })
-      }
-
       debouncedScroll(event);
     };
 
@@ -208,23 +195,15 @@ export default function Page() {
     listing: Animal
   }
 
-  function ListingPhoto({ current, listing } : PhotoProps) {
-    let listingIndex = 0;
-    if(current === 'current') {
-      listingIndex = currentListingIndex
-    } else if(current === 'next') {
-      listingIndex = currentListingIndex + 1;
-    } else if(current === 'prev') {
-      listingIndex = currentListingIndex - 1;
-    }
+  function ListingPhoto({ listing } : PhotoProps) {
     if(!loading && listings.length) {
       if(listing.photos.length) {
         return (
-            <img src={listing.photos[currentImageIndex]?.medium} alt={listing.breed}/>
+            <img src={listing.photos[currentImageIndex]?.medium} alt={listing.name}/>
         )
       } else {
         return (
-            <img src="" alt={listing.breed}/>
+            <img src="" alt={listing.name}/>
         )
       }
     }
@@ -283,7 +262,7 @@ export default function Page() {
   function ImageButtons() {
     if(loading) return;
     return (
-      <div className={scrolling ? "buttons buttons--scrolling" : "buttons"}>
+      <div>
         <PrevButton></PrevButton>
         <NextButton></NextButton>
       </div>
