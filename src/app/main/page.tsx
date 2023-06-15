@@ -89,6 +89,7 @@ export default function Page() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [currentListingsPage, setCurrentListingsPage] = useState(1);
+  const [beforeTimestamp, setBeforeTimestamp] = useState(new Date().toISOString());
 
   function nextListing() {
     setCurrentListingIndex((prevIndex) => {
@@ -116,7 +117,7 @@ export default function Page() {
 
   useEffect(() => {
     if(currentListingIndex === 0 && !listings.length) return;
-    if(currentListingIndex === listings.length - 1) {
+    if(currentListingIndex === listings.length - 2) {
       setCurrentListingsPage((prevPage: number) => {
         return ++prevPage;
       })
@@ -164,12 +165,19 @@ export default function Page() {
   const fetchAnimals = (): void => {
     client.animal.search({
       page: currentListingsPage,
+      before: beforeTimestamp
     }).then(response => {
+        if(response.data.pagination.current_page === '1') {
+          setBeforeTimestamp(response.data.animals[0].published_at);
+        }
         setListings((previousValue: Animal[]) => {
           const allListings: Animal[] = [...previousValue, ...response.data.animals];
           return allListings.filter((item, index) => allListings.indexOf(item) === index);
         });
       })
+        .catch(err => {
+          console.log(err);
+        })
     setLoading(false);
   }
 
@@ -188,7 +196,7 @@ export default function Page() {
     return () => {
       window.removeEventListener('mousewheel', handleScroll);
     };
-  }, [listings])
+  }, [])
 
   type PhotoProps = {
     current: string,
@@ -260,13 +268,17 @@ export default function Page() {
   }
 
   function ImageButtons() {
-    if(loading) return;
-    return (
-      <div>
-        <PrevButton></PrevButton>
-        <NextButton></NextButton>
-      </div>
-    )
+    if(!loading && listings.length && listings[currentListingIndex]) {
+      if(listings[currentListingIndex].photos.length) {
+        return (
+            <div>
+              <PrevButton></PrevButton>
+              <NextButton></NextButton>
+            </div>
+        )
+      }
+    }
+    return;
   }
 
   return (
