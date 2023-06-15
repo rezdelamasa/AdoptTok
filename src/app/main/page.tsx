@@ -165,7 +165,11 @@ export default function Page() {
   const fetchAnimals = (): void => {
     client.animal.search({
       page: currentListingsPage,
+      before: beforeTimestamp
     }).then(response => {
+        if(response.data.pagination.current_page === '1') {
+          setBeforeTimestamp(response.data.animals[0].published_at);
+        }
         setListings((previousValue: Animal[]) => {
           const allListings: Animal[] = [...previousValue, ...response.data.animals];
           return allListings.filter((item, index) => allListings.indexOf(item) === index);
