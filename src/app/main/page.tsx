@@ -175,6 +175,9 @@ export default function Page() {
           return allListings.filter((item, index) => allListings.indexOf(item) === index);
         });
       })
+        .catch(err => {
+          console.log(err);
+        })
     setLoading(false);
   }
 
