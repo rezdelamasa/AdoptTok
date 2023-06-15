@@ -117,7 +117,7 @@ export default function Page() {
 
   useEffect(() => {
     if(currentListingIndex === 0 && !listings.length) return;
-    if(currentListingIndex === listings.length - 1) {
+    if(currentListingIndex === listings.length - 2) {
       setCurrentListingsPage((prevPage: number) => {
         return ++prevPage;
       })
