@@ -89,6 +89,7 @@ export default function Page() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [currentListingsPage, setCurrentListingsPage] = useState(1);
+  const [beforeTimestamp, setBeforeTimestamp] = useState(new Date().toISOString());
 
   function nextListing() {
     setCurrentListingIndex((prevIndex) => {
