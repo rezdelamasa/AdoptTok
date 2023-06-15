@@ -196,7 +196,7 @@ export default function Page() {
     return () => {
       window.removeEventListener('mousewheel', handleScroll);
     };
-  }, [listings])
+  }, [])
 
   type PhotoProps = {
     current: string,
