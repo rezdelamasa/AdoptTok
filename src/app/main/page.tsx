@@ -268,13 +268,17 @@ export default function Page() {
   }
 
   function ImageButtons() {
-    if(loading) return;
-    return (
-      <div>
-        <PrevButton></PrevButton>
-        <NextButton></NextButton>
-      </div>
-    )
+    if(!loading && listings.length && listings[currentListingIndex]) {
+      if(listings[currentListingIndex].photos.length) {
+        return (
+            <div>
+              <PrevButton></PrevButton>
+              <NextButton></NextButton>
+            </div>
+        )
+      }
+    }
+    return;
   }
 
   return (
